@@ -1205,7 +1205,40 @@ function wifiBroadcastState() {
 const wifiChannels = {
   auto:    {name: 'Auto (any band)', nmBand: '',   nmChannel: ''},
   auto_24: {name: 'Auto (2.4 GHz)',  nmBand: 'bg', nmChannel: ''},
-  auto_50: {name: 'Auto (5.0 GHz)',  nmBand: 'a',  nmChannel: ''}
+  ch1_24: {name: 'Channel 1 (2.4 GHz)',  nmBand: 'bg', nmChannel: '1'},
+  ch2_24: {name: 'Channel 2 (2.4 GHz)',  nmBand: 'bg', nmChannel: '2'},
+  ch3_24: {name: 'Channel 3 (2.4 GHz)',  nmBand: 'bg', nmChannel: '3'},
+  ch4_24: {name: 'Channel 4 (2.4 GHz)',  nmBand: 'bg', nmChannel: '4'},
+  ch5_24: {name: 'Channel 5 (2.4 GHz)',  nmBand: 'bg', nmChannel: '5'},
+  ch6_24: {name: 'Channel 6 (2.4 GHz)',  nmBand: 'bg', nmChannel: '6'},
+  ch7_24: {name: 'Channel 7 (2.4 GHz)',  nmBand: 'bg', nmChannel: '7'},
+  ch8_24: {name: 'Channel 8 (2.4 GHz)',  nmBand: 'bg', nmChannel: '8'},
+  ch9_24: {name: 'Channel 9 (2.4 GHz)',  nmBand: 'bg', nmChannel: '9'},
+  ch10_24: {name: 'Channel 10 (2.4 GHz)',  nmBand: 'bg', nmChannel: '10'},
+  ch11_24: {name: 'Channel 11 (2.4 GHz)',  nmBand: 'bg', nmChannel: '11'},
+  ch12_24: {name: 'Channel 12 (2.4 GHz)',  nmBand: 'bg', nmChannel: '12'},
+  ch13_24: {name: 'Channel 13 (2.4 GHz)',  nmBand: 'bg', nmChannel: '13'},
+  auto_50: {name: 'Auto (5.0 GHz)',  nmBand: 'a',  nmChannel: ''},
+  ch36_50: {name: 'Channel 36 (5.0 GHz)',  nmBand: 'a',  nmChannel: '36'},
+  ch40_50: {name: 'Channel 40 (5.0 GHz)',  nmBand: 'a',  nmChannel: '40'},
+  ch44_50: {name: 'Channel 44 (5.0 GHz)',  nmBand: 'a',  nmChannel: '44'},
+  ch48_50: {name: 'Channel 48 (5.0 GHz)',  nmBand: 'a',  nmChannel: '48'},
+  ch52_50: {name: 'Channel 50 (5.0 GHz)',  nmBand: 'a',  nmChannel: '50'},
+  ch56_50: {name: 'Channel 46 (5.0 GHz)',  nmBand: 'a',  nmChannel: '56'},
+  ch60_50: {name: 'Channel 60 (5.0 GHz)',  nmBand: 'a',  nmChannel: '60'},
+  ch64_50: {name: 'Channel 64 (5.0 GHz)',  nmBand: 'a',  nmChannel: '64'},
+  ch100_50: {name: 'Channel 100 (5.0 GHz)',  nmBand: 'a',  nmChannel: '100'},
+  ch104_50: {name: 'Channel 104 (5.0 GHz)',  nmBand: 'a',  nmChannel: '104'},
+  ch108_50: {name: 'Channel 108 (5.0 GHz)',  nmBand: 'a',  nmChannel: '108'},
+  ch112_50: {name: 'Channel 112 (5.0 GHz)',  nmBand: 'a',  nmChannel: '112'},
+  ch116_50: {name: 'Channel 116 (5.0 GHz)',  nmBand: 'a',  nmChannel: '116'},
+  ch120_50: {name: 'Channel 120 (5.0 GHz)',  nmBand: 'a',  nmChannel: '120'},
+  ch124_50: {name: 'Channel 124 (5.0 GHz)',  nmBand: 'a',  nmChannel: '124'},
+  ch128_50: {name: 'Channel 128 (5.0 GHz)',  nmBand: 'a',  nmChannel: '128'},
+  ch132_50: {name: 'Channel 132 (5.0 GHz)',  nmBand: 'a',  nmChannel: '132'},
+  ch136_50: {name: 'Channel 136 (5.0 GHz)',  nmBand: 'a',  nmChannel: '136'},
+  ch140_50: {name: 'Channel 140 (5.0 GHz)',  nmBand: 'a',  nmChannel: '140'},
+  ch153_50: {name: 'Channel 153 (5.0 GHz)[Wi-Fi 6 AX210/AX211/AX411 160MHz]',  nmBand: 'a',  nmChannel: '153'} // Channel working for Wi-Fi 6 AX210/AX211/AX411 160MHz
 };
 
 function getWifiChannelMap(list) {
@@ -1437,6 +1470,8 @@ async function wifiUpdateDevices() {
         const vendor = prop[0].replace('Corporation', '').trim();
         const pb = prop[1].match(/[\[\(](.+)[\]\)]/);
         const product = pb ? pb[1] : prop[1];
+        const axregex = /AX210|AX211|AX411/;
+
 
         wifiIfs[hwAddr] = {
           id,
@@ -1453,10 +1488,46 @@ async function wifiUpdateDevices() {
 
           wifiIfs[hwAddr].hotspot.availableChannels = ['auto'];
           if (prop[3] === 'yes') {
-            wifiIfs[hwAddr].hotspot.availableChannels.push('auto_50');
+            if (axregex.test(prop[1])) {
+               wifiIfs[hwAddr].hotspot.availableChannels.push('ch153_50');  
+            } else {
+        wifiIfs[hwAddr].hotspot.availableChannels.push('auto_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch36_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch40_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch44_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch48_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch52_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch56_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch60_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch64_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch100_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch104_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch108_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch112_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch116_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch120_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch124_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch128_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch132_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch136_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('ch140_50');
+            }
           }
           if (prop[4] === 'yes') {
             wifiIfs[hwAddr].hotspot.availableChannels.push('auto_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch1_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch2_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch3_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch4_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch5_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch6_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch7_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch8_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch9_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch10_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch11_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch12_24');
+            wifiIfs[hwAddr].hotspot.availableChannels.push('ch13_24');
           }
         }
         newDevices = true;
