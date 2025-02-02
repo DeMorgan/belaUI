@@ -1205,41 +1205,134 @@ function wifiBroadcastState() {
 const wifiChannels = {
   auto:    {name: 'Auto (any band)', nmBand: '',   nmChannel: ''},
   auto_24: {name: 'Auto (2.4 GHz)',  nmBand: 'bg', nmChannel: ''},
-  ch1_24: {name: 'Channel 1 (2.4 GHz)',  nmBand: 'bg', nmChannel: '1'},
-  ch2_24: {name: 'Channel 2 (2.4 GHz)',  nmBand: 'bg', nmChannel: '2'},
-  ch3_24: {name: 'Channel 3 (2.4 GHz)',  nmBand: 'bg', nmChannel: '3'},
-  ch4_24: {name: 'Channel 4 (2.4 GHz)',  nmBand: 'bg', nmChannel: '4'},
-  ch5_24: {name: 'Channel 5 (2.4 GHz)',  nmBand: 'bg', nmChannel: '5'},
-  ch6_24: {name: 'Channel 6 (2.4 GHz)',  nmBand: 'bg', nmChannel: '6'},
-  ch7_24: {name: 'Channel 7 (2.4 GHz)',  nmBand: 'bg', nmChannel: '7'},
-  ch8_24: {name: 'Channel 8 (2.4 GHz)',  nmBand: 'bg', nmChannel: '8'},
-  ch9_24: {name: 'Channel 9 (2.4 GHz)',  nmBand: 'bg', nmChannel: '9'},
-  ch10_24: {name: 'Channel 10 (2.4 GHz)',  nmBand: 'bg', nmChannel: '10'},
-  ch11_24: {name: 'Channel 11 (2.4 GHz)',  nmBand: 'bg', nmChannel: '11'},
-  ch12_24: {name: 'Channel 12 (2.4 GHz)',  nmBand: 'bg', nmChannel: '12'},
-  ch13_24: {name: 'Channel 13 (2.4 GHz)',  nmBand: 'bg', nmChannel: '13'},
+
+  // 2.4 GHz Channels
+  ch1_24: {name: 'Channel 1 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '1'},
+  ch2_24: {name: 'Channel 2 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '2'},
+  ch3_24: {name: 'Channel 3 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '3'},
+  ch4_24: {name: 'Channel 4 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '4'},
+  ch5_24: {name: 'Channel 5 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '5'},
+  ch6_24: {name: 'Channel 6 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '6'},
+  ch7_24: {name: 'Channel 7 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '7'},
+  ch8_24: {name: 'Channel 8 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '8'},
+  ch9_24: {name: 'Channel 9 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '9'},
+  ch10_24: {name: 'Channel 10 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '10'},
+  ch11_24: {name: 'Channel 11 (2.4 GHz) [US/EU/JP/CN]',  nmBand: 'bg', nmChannel: '11'},
+  ch12_24: {name: 'Channel 12 (2.4 GHz) [EU/JP/CN]',  nmBand: 'bg', nmChannel: '12'},
+  ch13_24: {name: 'Channel 13 (2.4 GHz) [EU/JP/CN]',  nmBand: 'bg', nmChannel: '13'},
+
+  // 5 GHz Channels
   auto_50: {name: 'Auto (5.0 GHz)',  nmBand: 'a',  nmChannel: ''},
-  ch36_50: {name: 'Channel 36 (5.0 GHz)',  nmBand: 'a',  nmChannel: '36'},
-  ch40_50: {name: 'Channel 40 (5.0 GHz)',  nmBand: 'a',  nmChannel: '40'},
-  ch44_50: {name: 'Channel 44 (5.0 GHz)',  nmBand: 'a',  nmChannel: '44'},
-  ch48_50: {name: 'Channel 48 (5.0 GHz)',  nmBand: 'a',  nmChannel: '48'},
-  ch52_50: {name: 'Channel 50 (5.0 GHz)',  nmBand: 'a',  nmChannel: '50'},
-  ch56_50: {name: 'Channel 46 (5.0 GHz)',  nmBand: 'a',  nmChannel: '56'},
-  ch60_50: {name: 'Channel 60 (5.0 GHz)',  nmBand: 'a',  nmChannel: '60'},
-  ch64_50: {name: 'Channel 64 (5.0 GHz)',  nmBand: 'a',  nmChannel: '64'},
-  ch100_50: {name: 'Channel 100 (5.0 GHz)',  nmBand: 'a',  nmChannel: '100'},
-  ch104_50: {name: 'Channel 104 (5.0 GHz)',  nmBand: 'a',  nmChannel: '104'},
-  ch108_50: {name: 'Channel 108 (5.0 GHz)',  nmBand: 'a',  nmChannel: '108'},
-  ch112_50: {name: 'Channel 112 (5.0 GHz)',  nmBand: 'a',  nmChannel: '112'},
-  ch116_50: {name: 'Channel 116 (5.0 GHz)',  nmBand: 'a',  nmChannel: '116'},
-  ch120_50: {name: 'Channel 120 (5.0 GHz)',  nmBand: 'a',  nmChannel: '120'},
-  ch124_50: {name: 'Channel 124 (5.0 GHz)',  nmBand: 'a',  nmChannel: '124'},
-  ch128_50: {name: 'Channel 128 (5.0 GHz)',  nmBand: 'a',  nmChannel: '128'},
-  ch132_50: {name: 'Channel 132 (5.0 GHz)',  nmBand: 'a',  nmChannel: '132'},
-  ch136_50: {name: 'Channel 136 (5.0 GHz)',  nmBand: 'a',  nmChannel: '136'},
-  ch140_50: {name: 'Channel 140 (5.0 GHz)',  nmBand: 'a',  nmChannel: '140'},
-  ch153_50: {name: 'Channel 153 (5.0 GHz)[Wi-Fi 6 AX210/AX211/AX411 160MHz]',  nmBand: 'a',  nmChannel: '153'} // Channel working for Wi-Fi 6 AX210/AX211/AX411 160MHz
+  ch36_50: {name: 'Channel 36 (5.0 GHz) [US/EU/JP/CN]',  nmBand: 'a',  nmChannel: '36'},
+  ch40_50: {name: 'Channel 40 (5.0 GHz) [US/EU/JP/CN]',  nmBand: 'a',  nmChannel: '40'},
+  ch44_50: {name: 'Channel 44 (5.0 GHz) [US/EU/JP/CN]',  nmBand: 'a',  nmChannel: '44'},
+  ch48_50: {name: 'Channel 48 (5.0 GHz) [US/EU/JP/CN]',  nmBand: 'a',  nmChannel: '48'},
+
+  // DFS Required Channels
+  ch52_50: {name: 'Channel 52 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '52'},
+  ch56_50: {name: 'Channel 56 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '56'},
+  ch60_50: {name: 'Channel 60 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '60'},
+  ch64_50: {name: 'Channel 64 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '64'},
+  ch100_50: {name: 'Channel 100 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '100'},
+  ch104_50: {name: 'Channel 104 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '104'},
+  ch108_50: {name: 'Channel 108 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '108'},
+  ch112_50: {name: 'Channel 112 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '112'},
+  ch116_50: {name: 'Channel 116 (5.0 GHz) [DFS: US/EU/JP]',  nmBand: 'a',  nmChannel: '116'},
+  ch120_50: {name: 'Channel 120 (5.0 GHz) [DFS: EU/JP]',  nmBand: 'a',  nmChannel: '120'},
+  ch124_50: {name: 'Channel 124 (5.0 GHz) [DFS: EU/JP]',  nmBand: 'a',  nmChannel: '124'},
+  ch128_50: {name: 'Channel 128 (5.0 GHz) [DFS: EU/JP]',  nmBand: 'a',  nmChannel: '128'},
+  ch132_50: {name: 'Channel 132 (5.0 GHz) [DFS: EU/JP]',  nmBand: 'a',  nmChannel: '132'},
+  ch136_50: {name: 'Channel 136 (5.0 GHz) [DFS: EU/JP]',  nmBand: 'a',  nmChannel: '136'},
+  ch140_50: {name: 'Channel 140 (5.0 GHz) [DFS: EU/JP]',  nmBand: 'a',  nmChannel: '140'},
+
+  // Higher 5 GHz Channels (not allowed in EU)
+  ch153_50: {name: 'Channel 153 (5.0 GHz) [US/JP/CN] [Wi-Fi 6 AX210/AX211/AX411 160MHz]',  nmBand: 'a',  nmChannel: '153'}
 };
+
+const wifiChannelsByCountry = {
+    "EU": {
+        "2.4GHz": {
+            "allowed": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"], // Commonly available channels
+            "restricted": [],
+            "forbidden": ["14"] // Channel 14 is only allowed in Japan
+        },
+        "5GHz": {
+            "allowed": ["36", "40", "44", "48"], // Non-DFS channels
+            "dfs_required": ["52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140", "144"], // DFS channels (require radar detection)
+            "restricted": [],
+            "forbidden": ["149", "153", "157", "161", "165"] // Higher channels are not allowed in the EU
+        },
+        "6GHz": {
+            "allowed": ["1", "5", "9", "13", "17", "21", "25", "29", "33", "37", "41", "45", "49", "53", "57", "61", "65", "69", "73", "77", "81", "85", "89", "93", "97", "101", "105", "109", "113", "117", "121", "125", "129", "133", "137", "141", "145", "149", "153", "157", "161", "165", "169", "173", "177", "181", "185", "189", "193", "197", "201", "205", "209", "213", "217", "221", "225", "229", "233"],
+            "restricted": [],
+            "forbidden": []
+        }
+    },
+    "US": {
+        "2.4GHz": {
+            "allowed": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"], // Only 1-11 allowed in the US
+            "restricted": [],
+            "forbidden": ["12", "13", "14"] // Channels 12-14 are not available in the US
+        },
+        "5GHz": {
+            "allowed": ["36", "40", "44", "48", "149", "153", "157", "161", "165"], // Standard non-DFS channels
+            "dfs_required": ["52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140", "144"], // DFS channels
+            "restricted": [],
+            "forbidden": [] // US allows more high-frequency channels
+        },
+        "6GHz": {
+            "allowed": ["All indoor Wi-Fi 6E channels"], // The US allows all indoor Wi-Fi 6E channels
+            "restricted": [],
+            "forbidden": []
+        }
+    },
+    "JP": {
+        "2.4GHz": {
+            "allowed": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"], // Japan allows channel 14
+            "restricted": [],
+            "forbidden": []
+        },
+        "5GHz": {
+            "allowed": ["36", "40", "44", "48"], // Standard channels
+            "dfs_required": ["52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140", "144"], // DFS required
+            "restricted": [],
+            "forbidden": ["149", "153", "157", "161", "165"] // Higher frequencies are not allowed in Japan
+        },
+        "6GHz": {
+            "allowed": [],
+            "restricted": [],
+            "forbidden": []
+        }
+    },
+    "CN": {
+        "2.4GHz": {
+            "allowed": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"], // Commonly used in China
+            "restricted": [],
+            "forbidden": ["14"] // Not used in China
+        },
+        "5GHz": {
+            "allowed": ["36", "40", "44", "48", "149", "153", "157", "161", "165"], // Standard channels
+            "dfs_required": ["52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140", "144"], // DFS required
+            "restricted": [],
+            "forbidden": []
+        },
+        "6GHz": {
+            "allowed": [],
+            "restricted": [],
+            "forbidden": []
+        }
+    }
+};
+
+// Function to get available channels for a specific country
+function getWifiChannels(countryCode) {
+    if (wifiChannelsByCountry[countryCode]) {
+      return wifiChannelsByCountry[countryCode];
+    } else {
+      console.log("Unknown country");
+    }
+}
+
 
 function getWifiChannelMap(list) {
   const map = {};
@@ -1491,7 +1584,8 @@ async function wifiUpdateDevices() {
             if (axregex.test(prop[1])) {
                wifiIfs[hwAddr].hotspot.availableChannels.push('ch153_50');  
             } else {
-        wifiIfs[hwAddr].hotspot.availableChannels.push('auto_50');
+              wifiIfs[hwAddr].hotspot.availableChannels.push('auto_50');
+
               wifiIfs[hwAddr].hotspot.availableChannels.push('ch36_50');
               wifiIfs[hwAddr].hotspot.availableChannels.push('ch40_50');
               wifiIfs[hwAddr].hotspot.availableChannels.push('ch44_50');
