@@ -137,7 +137,7 @@ function handleAuthResult(msg) {
     $('#wifi').empty();
     $('#modemManager').empty();
     $('#main').removeClass('d-none');
-    $('#themeSelector').removeClass('d-none');
+    $('#localSettings').removeClass('d-none');
   } else if (!isShowingInitialPasswordForm) {
     showLoginForm();
   }
@@ -499,9 +499,12 @@ function loadConfig(c) {
   $('#srtlaPort').val(config.srtla_port ?? "");
   $('#srtStreamid').val(config.srt_streamid ?? "");
 
+  $("#bitrateOverlay").prop('checked', config.bitrate_overlay)
+
+  $('#autoStart').prop('checked', config.autostart ?? false);
+  $('#autoStartForm button[type=submit]').prop('disabled', true);
   $('#remoteDeviceKey').val(config.remote_key);
   $('#remoteKeyForm button[type=submit]').prop('disabled', true);
-  $("#bitrateOverlay").prop('checked', config.bitrate_overlay)
 
   if (config.ssh_pass && sshStatus) {
     showSshStatus();
@@ -510,24 +513,72 @@ function loadConfig(c) {
 
 
 /* Pipelines */
-function genOptionList(options, selected) {
-  const list = [];
-  for (const o of options) {
-    for (const value in o) {
-      const html = '<option></option>'
-      const entry = $($.parseHTML(html));
-      entry.attr('value', value);
-      entry.text(o[value].name);
-      if (selected && value == selected) {
-        entry.attr('selected', true);
+function updateOptionList(select, options, selected) {
+  const validIds = {};
+
+  let entriesToDeselect = [];
+  let entryToSelect;
+  let prevOption;
+
+  for (const o in options) {
+    for (const value in options[o]) {
+      const id = `o_${o}_${value}`;
+      validIds[id] = true;
+
+      let entry = select.find(`.${id}`);
+      if (entry.length == 0) {
+        const html = '<option></option>'
+        entry = $($.parseHTML(html));
+        entry.addClass(id);
+        entry.data('option_id', id);
+        entry.attr('value', value);
+
+        if (prevOption) {
+          entry.insertAfter(prevOption);
+        } else {
+          select.prepend(entry);
+        }
       }
-      if (o[value].disabled) {
-        entry.attr('disabled', true);
+
+      const contents = options[o][value].name;
+      if (contents != entry.text()) {
+        entry.text(contents);
       }
-      list.push(entry);
+      const isDisabled = options[o][value].disabled;
+      if (entry.attr('disabled') != isDisabled) {
+        entry.attr('disabled', isDisabled);
+      }
+      const isSelected = (selected && value == selected);
+      const wasSelected = entry.attr('selected') == 'selected';
+      if (isSelected && !wasSelected) {
+        entryToSelect = entry;
+      }
+      if (!isSelected && wasSelected) {
+        entriesToDeselect.push(entry);
+      }
+
+      prevOption = entry;
     }
+  } // for o in options
+
+  // Delete removed options
+  select.find('option').each(function() {
+    const option = $(this)
+    const optionId = option.data('option_id');
+    if (optionId && !validIds[optionId]) {
+      option.remove();
+    }
+  });
+
+  // Update the selected entry if it's changed
+  // First, we have to deselect any other entries
+  for (const e of entriesToDeselect) {
+    e.attr('selected', false);
   }
-  return list;
+
+  if (entryToSelect) {
+    entryToSelect.attr('selected', true);
+  }
 }
 
 let pipelines = {};
@@ -536,8 +587,7 @@ function updatePipelines(ps) {
     pipelines = ps;
   }
 
-  const list = genOptionList([pipelines], config.pipeline);
-  $('#pipelines').html(list);
+  updateOptionList($('#pipelines'), [pipelines], config.pipeline);
 
   pipelineSelectHandler($('#pipelines').val())
 }
@@ -612,8 +662,7 @@ function updateRelays(r) {
       }
     }
   }
-  const serverList = genOptionList([relays ? relays.servers : {}, preset], selectedServer);
-  $('#relayServer').html(serverList);
+  updateOptionList($('#relayServer'), [relays ? relays.servers : {}, preset], selectedServer);
 
   let selectedAccount = config.relay_account;
   if (!relays || config.srt_streamid !== undefined) {
@@ -624,8 +673,7 @@ function updateRelays(r) {
       selectedAccount = 'unavailable';
     }
   }
-  const accountList = genOptionList([relays ? relays.accounts : {}, preset], selectedAccount);
-  $('#relayAccount').html(accountList);
+  updateOptionList($('#relayAccount'), [relays ? relays.accounts : {}, preset], selectedAccount);
 
   updateRelaySettings();
 }
@@ -955,7 +1003,7 @@ function updateWifiState(msg) {
               </div> <!-- .hotspot -->
 
               <div class="client d-none">
-                <button type="button" class="btn btn-block btn-secondary btn-netact mb-2 wifi-scan-button" onClick="wifiScan(this, ${deviceId})">
+                <button type="button" class="btn btn-block btn-secondary netact mb-2 wifi-scan-button" onClick="wifiScan(this, ${deviceId})">
                   Scan for WiFi networks
                 </button>
 
@@ -1042,8 +1090,8 @@ function updateWifiState(msg) {
         deviceCard.find('.hotspot-password').val(device.hotspot.password);
       }
       if (!wifiIfs[deviceId] || !wifiIfs[deviceId].hotspot || wifiIfs[deviceId].hotspot.channel != device.hotspot.channel) {
-        const channels = genOptionList([device.hotspot.available_channels], device.hotspot.channel);
-        deviceCard.find('select.hotspot-channel').html(channels);
+        updateOptionList(deviceCard.find('select.hotspot-channel'),
+                         [device.hotspot.available_channels], device.hotspot.channel);
       }
 
       if (device.hotspot.warnings && device.hotspot.warnings.includes('modified')) {
@@ -1345,7 +1393,8 @@ function updateModemsState(msg) {
         const name = value.replace(/g/g, 'G / ').replace(/ \/ $/, '');
         options[value] = {name};
       }
-      deviceCard.find('.network-type-input').html(genOptionList([options], device.network_type.active));
+      updateOptionList(deviceCard.find('.network-type-input'),
+                       [options], device.network_type.active);
     }
 
     if (device.config) {
@@ -1395,7 +1444,7 @@ function updateModemsState(msg) {
             disabled: (availableNetworks[i].availability == 'forbidden')
           };
         }
-        networkSelect.html(genOptionList([auto, options], selectedNetwork));
+        updateOptionList(networkSelect, [auto, options], selectedNetwork);
 
         // Re-enable the scan button after receiving the results
         if (device.available_networks) {
@@ -1679,7 +1728,8 @@ function showBitrate(value) {
 }
 
 function initBitrateSlider(bitrateDefault) {
-  $("#bitrateSlider").slider({
+  const s = $("#bitrateSlider");
+  s.slider({
     range: false,
     min: 500,
     max: 12000,
@@ -1688,8 +1738,10 @@ function initBitrateSlider(bitrateDefault) {
     slide: (event, ui) => {
       showBitrate(ui.value);
       setBitrate(ui.value);
+      setSliderAutolockTimer(s);
     },
   });
+  initSliderLock(s);
   showBitrate(bitrateDefault);
 }
 
@@ -1698,15 +1750,18 @@ function showDelay(value) {
 }
 
 function initDelaySlider(defaultDelay) {
-  $("#delaySlider").slider({
+  const s = $("#delaySlider");
+  s.slider({
     min: -2000,
     max: 2000,
     step: 20,
     value: defaultDelay,
     slide: (event, ui) => {
       showDelay(ui.value);
+      setSliderAutolockTimer(s);
     },
   });
+  initSliderLock(s);
   showDelay(defaultDelay);
 }
 
@@ -1721,15 +1776,18 @@ function showSrtLatency(value) {
 }
 
 function initSrtLatencySlider(defaultLatency) {
-  $("#srtLatencySlider").slider({
+  const s = $("#srtLatencySlider");
+  s.slider({
     min: 100,
     max: 4000,
     step: 100,
     value: defaultLatency,
     slide: (event, ui) => {
       showSrtLatency(ui.value);
+      setSliderAutolockTimer(s);
     },
   });
+  initSliderLock(s);
   showSrtLatency(defaultLatency);
 }
 
@@ -1761,7 +1819,7 @@ function showLoginForm() {
   $('#main').addClass('d-none');
   $('#initialPasswordForm').addClass('d-none');
   $('#login').removeClass('d-none');
-  $('#themeSelector').removeClass('d-none');
+  $('#localSettings').removeClass('d-none');
 }
 
 function sendAuthMsg(password, isPersistent) {
@@ -1784,7 +1842,7 @@ function showInitialPasswordForm() {
   $('#main').addClass('d-none');
   $('#login').addClass('d-none');
   $('#initialPasswordForm').removeClass('d-none');
-  $('#themeSelector').removeClass('d-none');
+  $('#localSettings').removeClass('d-none');
   isShowingInitialPasswordForm = true;
 }
 
@@ -1884,6 +1942,25 @@ $('input#srtlaAddr').change(function() {
   showHideRelayHint($(this).val());
 });
 
+$('#autoStart').change(function() {
+  if(this.checked) {
+    if (!confirm('Warning: Enabling this option will cause the encoder to start streaming automatically upon power-up or reset, potentially at unintended times. Do not enable this setting if automatic streaming poses any privacy or safety risks.')) {
+      this.checked = false;
+    }
+  }
+
+  const settingChanged = (this.checked != (config.autostart ?? false));
+  const form = $(this).parents('form');
+  $(form).find('button[type=submit]').prop('disabled', !settingChanged);
+});
+
+$('#autoStartForm').submit(function() {
+  const autostart = $('#autoStart').prop('checked');
+  ws.send(JSON.stringify({config: {autostart}}));
+
+  return false;
+});
+
 /* Input fields automatically copied to clipboard when clicked */
 function copyInputValToClipboard(obj) {
   if (!document.queryCommandSupported || !document.queryCommandSupported("copy")) {
@@ -1928,4 +2005,109 @@ $('input.click-copy').click(function(ev) {
       delete target.copiedTooltipTimer;
     }, 3000);
   }
+});
+
+
+/* Slider locking */
+function getSliderLockBtn(slider) {
+  return slider.parents('.form-group').find('.button-slider-lock-unlock');
+}
+
+function updateSliderLockState(slider, btn, isLocked) {
+  if (!btn) {
+    btn = getSliderLockBtn(slider);
+  }
+
+  slider.slider('option', 'disabled', isLocked);
+  btn.text(isLocked ? "\u{1F512}" : "\u{1F513}");
+
+  if (!isLocked && sliderLockSetting == 'autolock') {
+    setSliderAutolockTimer(slider);
+  }
+}
+
+function setSliderAutolockTimer(slider) {
+  let lockTimer = slider.data('lockTimer');
+  if (lockTimer) {
+    clearTimeout(lockTimer);
+  }
+
+  // If auto-locking is disabled, don't set another timer
+  if (sliderLockSetting != 'autolock') {
+    slider.data('lockTimer', null);
+    return;
+  }
+
+  lockTimer = setTimeout(function() {
+    /* We have to check here too, in case autolocking was disabled
+       between the event being set up and firing */
+    if (sliderLockSetting == 'autolock') {
+      updateSliderLockState(slider, undefined, true);
+    }
+    slider.data('lockTimer', null);
+  }, 5000);
+  slider.data('lockTimer', lockTimer);
+}
+
+function initSliderLock(slider) {
+  const btn = getSliderLockBtn(slider);
+
+  // If the slider locks are disabled, remove the event handler and hide the lock button
+  if (!sliderLockSetting) {
+    btn.parent().addClass('d-none');
+    btn.off('click');
+    return;
+  }
+
+  const lockWasHidden = btn.parent().hasClass('d-none');
+  const isLocked = lockWasHidden ? true : slider.slider('option', 'disabled');
+
+  updateSliderLockState(slider, btn, isLocked);
+
+  if (lockWasHidden) {
+    btn.click(function () {
+      const slider = $(btn).parents('.form-group').find('.slider');
+      const isLocked = slider.slider('option', 'disabled');
+      updateSliderLockState(slider, btn, !isLocked);
+    });
+    btn.parent().removeClass('d-none');
+  }
+}
+
+/* Slider lock setting: load and update */
+function isTouchDevice() {
+  return (('ontouchstart' in window) ||
+     (navigator.maxTouchPoints > 0) ||
+     (navigator.msMaxTouchPoints > 0));
+}
+function loadSliderLockSetting() {
+  let s = localStorage.getItem('sliderLocks');
+  switch (s) {
+    case 'autolock':
+    case 'on':
+      break;
+    case 'off':
+      break;
+    default:
+      s = 'off';
+      // if (isTouchDevice()) s = 'autolock';
+  }
+
+  $('#sliderLockSetting>select').val(s);
+
+  if (s != 'off') return s;
+}
+let sliderLockSetting = loadSliderLockSetting();
+
+$('#sliderLockSetting>select').change(function () {
+  let s = $(this).val();
+  localStorage.setItem('sliderLocks', s);
+  if (s != 'on' && s != 'autolock') {
+    s = undefined;
+  }
+  sliderLockSetting = s;
+
+  $('.slider').each(function () {
+    initSliderLock($(this));
+  });
 });
