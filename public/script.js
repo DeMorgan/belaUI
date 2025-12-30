@@ -173,9 +173,9 @@ function genNetifEntry(error, enabled, name, ip, throughput, isBold = false) {
   const html = `
     <tr>
       <td>${checkbox}</td>
-      <td class="netif_name"></td>
-      <td class="netif_ip"></td>
-      <td class="netif_tp ${isBold ? 'font-weight-bold' : ''}"></td>
+      <td class="netif_name ${isBold ? 'font-weight-bold' : ''}"></td>
+      <td class="netif_ip ${isBold ? 'font-weight-bold' : ''}"></td>
+      <td class="col-6 netif_tp ${isBold ? 'font-weight-bold' : ''}"></td>
     </tr>`;
 
   const entry = $($.parseHTML(html));
@@ -194,6 +194,8 @@ function genNetifEntry(error, enabled, name, ip, throughput, isBold = false) {
 function updateNetif(netifs) {
   let modemList = [];
   let totalKbps = 0;
+  let connsEnabled = 0;
+  let connsCount = 0;
 
   for (const i in netifs) {
     data = netifs[i];
@@ -201,13 +203,25 @@ function updateNetif(netifs) {
     totalKbps += tpKbps;
 
     modemList.push(genNetifEntry(data.error, data.enabled, i, data.ip, `${tpKbps} Kbps`));
+
+    connsCount += 1;
+    if (data.enabled) {
+      connsEnabled += 1;
+    }
   }
 
-  if (Object.keys(netifs).length > 1) {
-    modemList.push(genNetifEntry(undefined, undefined, '', '', `${totalKbps} Kbps`, true));
+  if (connsCount > 1) {
+    let countLabel;
+    if (connsEnabled == connsCount) {
+      countLabel = `${connsCount} conns`;
+    } else {
+      countLabel = `${connsEnabled} / ${connsCount} conns`;
+    }
+    const totalRow = genNetifEntry(undefined, undefined, 'Total', countLabel, `${totalKbps} Kbps`, true);
+    modemList.unshift(totalRow);
   }
 
-  $('#modems').html(modemList);
+  $('#netifTable>tbody').html(modemList);
 }
 
 function updateSensors(sensors) {
@@ -227,7 +241,7 @@ function updateSensors(sensors) {
     sensorList.push(entry);
   }
 
-  $('#sensors').html(sensorList);
+  $('#sensorsTable>tbody').html(sensorList);
 }
 
 
@@ -2110,4 +2124,37 @@ $('#sliderLockSetting>select').change(function () {
   $('.slider').each(function () {
     initSliderLock($(this));
   });
+});
+
+/* Layout setting */
+let layoutSetting;
+function updateLayout(layout) {
+  if (layout == 'netif-first') {
+    $('body').addClass('netif-first');
+  } else {
+    $('body').removeClass('netif-first');
+  }
+  layoutSetting = layout;
+}
+
+function loadLayoutSetting() {
+  let s = localStorage.getItem('layout');
+  switch (s) {
+    case 'standard':
+    case 'netif-first':
+      break;
+    default:
+      s = 'standard';
+  }
+
+  $('#layoutSetting>select').val(s);
+
+  updateLayout(s);
+}
+loadLayoutSetting();
+
+$('#layoutSetting>select').change(function () {
+  const s = $(this).val();
+  localStorage.setItem('layout', s);
+  updateLayout(s);
 });
